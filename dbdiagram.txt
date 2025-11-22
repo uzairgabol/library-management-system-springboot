@@ -1,0 +1,17 @@
+Table authors {
+  id varchar [primary key]
+  name varchar [not null]
+  email varchar unique [not null]
+  bio varchar
+}
+
+
+Table books {
+  id varchar [primary key]
+  title varchar [not null]
+  isbn varchar unique [not null]
+  publishedDate timestamp [not null]
+  authorId varchar [not null]
+}
+
+Ref books: books.authorId > authors.id
