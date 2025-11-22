@@ -3,12 +3,18 @@ package com.uzairproject.librarymanagement.services.serviceimpl;
 import com.uzairproject.librarymanagement.models.Author;
 import com.uzairproject.librarymanagement.repositories.AuthorRepo;
 import com.uzairproject.librarymanagement.services.AuthorService;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class AuthorServiceImpl implements AuthorService {
 
     private AuthorRepo authorRepo;
+
+    public AuthorServiceImpl(AuthorRepo authorRepo){
+        this.authorRepo = authorRepo;
+    }
 
     @Override
     public Author createAuthor(Author author){
@@ -27,9 +33,11 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     public Author updateAuthorInfo(Long authorId, Author author) {
-        Author updatedAuthor = authorRepo.findById(authorId).orElseThrow(() -> new RuntimeException("Author Not found: " + authorId));
-        updatedAuthor = author;
-        return authorRepo.save(updatedAuthor);
+        Author existingAuthor = authorRepo.findById(authorId).orElseThrow(() -> new RuntimeException("Author Not found: " + authorId));
+        existingAuthor.setName(author.getName());
+        existingAuthor.setEmail(author.getEmail());
+        existingAuthor.setBio(author.getBio());
+        return authorRepo.save(existingAuthor);
     }
 
     @Override
