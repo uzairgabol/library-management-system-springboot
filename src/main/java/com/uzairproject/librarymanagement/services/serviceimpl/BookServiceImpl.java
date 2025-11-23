@@ -2,6 +2,8 @@ package com.uzairproject.librarymanagement.services.serviceimpl;
 
 import com.uzairproject.librarymanagement.dtos.BookRequestDto;
 import com.uzairproject.librarymanagement.dtos.BookResponseDto;
+import com.uzairproject.librarymanagement.exceptions.BookNotFoundException;
+import com.uzairproject.librarymanagement.exceptions.IsbnAlreadyUsedException;
 import com.uzairproject.librarymanagement.models.Author;
 import com.uzairproject.librarymanagement.models.Book;
 import com.uzairproject.librarymanagement.repositories.AuthorRepo;
@@ -27,7 +29,10 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public BookResponseDto createBook(BookRequestDto bookRequestDto) {
-        Author author = authorRepo.findById(bookRequestDto.authorId()).orElseThrow(() -> new RuntimeException("Author not found with id: " + bookRequestDto.authorId()));
+        if ( (bookRepo.findByIsbn(bookRequestDto.isbn())) != null){
+            throw new IsbnAlreadyUsedException("ISBN for this book already exists");
+        }
+        Author author = authorRepo.findById(bookRequestDto.authorId()).orElseThrow(() -> new BookNotFoundException("Author not found with id: " + bookRequestDto.authorId()));
         return entityMappers.convertBookEntityToBookDto(bookRepo.save(entityMappers.convertBookDtoToBookEntity(bookRequestDto, author)));
     }
 
@@ -39,12 +44,12 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public BookResponseDto getBookById(Long bookId) {
-        return entityMappers.convertBookEntityToBookDto(bookRepo.findById(bookId).orElseThrow(() -> new RuntimeException("Book with id not found: " + bookId)));
+        return entityMappers.convertBookEntityToBookDto(bookRepo.findById(bookId).orElseThrow(() -> new BookNotFoundException("Book with id not found: " + bookId)));
     }
 
     @Override
     public BookResponseDto updateBookById(Long bookId, BookRequestDto bookRequestDto) {
-        Author author = authorRepo.findById(bookRequestDto.authorId()).orElseThrow(() -> new RuntimeException("Author not found with id: " + bookRequestDto.authorId()));
+        Author author = authorRepo.findById(bookRequestDto.authorId()).orElseThrow(() -> new BookNotFoundException("Author not found with id: " + bookRequestDto.authorId()));
         Book existingBook = bookRepo.findById(bookId).orElseThrow(() -> new RuntimeException("Book with id not found: " + bookId));
         existingBook.setAuthor(author);
         existingBook.setTitle(bookRequestDto.title());
@@ -54,7 +59,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public void removeBookById(Long bookId) {
-        Book existingBook = bookRepo.findById(bookId).orElseThrow(() -> new RuntimeException("Book with id not found: " + bookId));
+        Book existingBook = bookRepo.findById(bookId).orElseThrow(() -> new BookNotFoundException("Book with id not found: " + bookId));
         bookRepo.delete(existingBook);
     }
 }
