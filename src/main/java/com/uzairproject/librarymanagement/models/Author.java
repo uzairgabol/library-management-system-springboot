@@ -1,13 +1,20 @@
 package com.uzairproject.librarymanagement.models;
 
 import jakarta.persistence.*;
+import java.util.Set;
 
 @Entity
 @Table(name = "author")
-public class Author {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Author extends BaseEntity{
+
+    public Author(){}
+
+    public Author(String name, String email, String bio, Set<Book> books){
+        this.name = name;
+        this.email = email;
+        this.bio = bio;
+        this.books = books;
+    }
 
     @Column(nullable = false)
     private String name;
@@ -17,9 +24,8 @@ public class Author {
 
     private String bio;
 
-    public Long getId() {
-        return id;
-    }
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Book> books;
 
     public String getName() {
         return name;
@@ -33,6 +39,10 @@ public class Author {
         return bio;
     }
 
+    public Set<Book> getBooks() {
+       return books;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -43,5 +53,9 @@ public class Author {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public void setBooks(Set<Book> books) {
+        this.books = books;
     }
 }

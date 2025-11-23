@@ -1,14 +1,16 @@
 package com.uzairproject.librarymanagement.services;
 
-import com.uzairproject.librarymanagement.models.Author;
-import com.uzairproject.librarymanagement.repositories.AuthorRepo;
+import com.uzairproject.librarymanagement.dtos.AuthorRequestDto;
+import com.uzairproject.librarymanagement.dtos.AuthorResponseDto;
+import com.uzairproject.librarymanagement.dtos.BookResponseDto;
 
 import java.util.List;
 
 public interface AuthorService{
-    Author createAuthor(Author author);
-    List<Author> getAllAuthors();
-    Author getAuthorById(Long authorId);
-    Author updateAuthorInfo(Long authorId, Author author);
+    AuthorResponseDto createAuthor(AuthorRequestDto authorDto);
+    List<AuthorResponseDto> getAllAuthors();
+    AuthorResponseDto getAuthorById(Long authorId);
+    AuthorResponseDto updateAuthorInfo(Long authorId, AuthorRequestDto author);
     void deleteAuthor(Long authorId);
+    List<BookResponseDto> getBooksByAuthor(Long authorId);
 }
